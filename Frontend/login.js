@@ -1,39 +1,37 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const createAccountForm = document.querySelector('form');
-  
-    createAccountForm.addEventListener('submit', function(event) {
+  const loginForm = document.getElementById('loginForm');
+
+  loginForm.addEventListener('submit', function(event) {
       event.preventDefault();
-  
+
       const emailInput = document.getElementById('email');
       const passwordInput = document.getElementById('password');
-  
+
       const email = emailInput.value;
       const password = passwordInput.value;
-  
-      fetch('/create-account', { // Assuming your Flask route is '/create-account'
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: email, password: password }),
+
+      fetch('http://127.0.0.1:5000/login', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email: email, password: password }),
       })
       .then(response => {
-        if (!response.ok) {
-          // Handle HTTP errors more user-friendly
-          return response.json().then(errorData => {
-            throw new Error(errorData.message || 'An error occurred. Please try again.');
-          });
-        }
-        return response.json();
+          if (!response.ok) {
+              return response.json().then(errorData => {
+                  throw new Error(errorData.message || 'An error occurred. Please try again.');
+              });
+          }
+          return response.json();
       })
       .then(data => {
-        alert(data.message || 'Account created successfully!'); // Display success message
-        // Optionally redirect to login or another page:
-        window.location.href = '/login.html';
+          alert(data.message || 'Login successful!');
+          // Optionally, redirect to another page upon successful login
+          // window.location.href = '/dashboard.html';
       })
       .catch(error => {
-        // Display user-friendly error message
-        alert('Error: ' + error.message);
+          alert('Error: ' + error.message);
       });
-    });
   });
+});
